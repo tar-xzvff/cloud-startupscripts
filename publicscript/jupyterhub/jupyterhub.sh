@@ -70,6 +70,9 @@ server {
     listen       80;
     server_name  localhost;
 
+    rewrite ^/signup$ http://$server_name/jupyter/signup permanent;
+    rewrite ^/login$ http://$server_name/jupyter/ permanent;
+
     #charset koi8-r;
     #access_log  /var/log/nginx/host.access.log  main;
 
@@ -137,6 +140,20 @@ systemctl restart nginx.service
 git clone https://github.com/jupyterhub/nativeauthenticator.git /tmp/nativeauthenticator
 /opt/jupyterhub/bin/python3 -m pip install -e /tmp/nativeauthenticator/
 echo "c.JupyterHub.authenticator_class = 'nativeauthenticator.NativeAuthenticator'" >> /opt/jupyterhub/etc/jupyterhub/jupyterhub_config.py
-
+echo "c.Authenticator.admin_users = {'admin'}" >> /opt/jupyterhub/etc/jupyterhub/jupyterhub_config.py
+systemctl restart jupyterhub.service
 # インストールはこれでokのはずだが、sing upとsing inが成功しないなぞ
 # base pathが微妙っぽいのでnginxの設定直す
+
+#以下のエラーが起きる
+#500 : Internal Server Error
+#Error in Authenticator.pre_spawn_start: KeyError "getpwnam(): name not found: 'admin'"
+#
+#You can try restarting your server from the home page.
+#pwdはunixのあれ
+#username ubuntuはとおる、やっぱりpamがまだ有効になってる
+
+# FIXME : HTTPでアクセスするときのpathが適切でない
+# FIXME : Authenticatorの設定がおかしい
+# TODO  : DockerSpawnerの設定をする
+# TODO  : DockerSpawnerとストレージの設定をする
