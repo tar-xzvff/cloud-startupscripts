@@ -2,6 +2,24 @@
 
 set -x
 
+apt-get update -y
+
+apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+apt-get install docker-ce docker-ce-cli containerd.io -y
+
 apt-get update
 
 apt-get install -y python3-venv
@@ -139,10 +157,33 @@ sed -ie "s/server_name  localhost;/server_name  $PUBLIC_IP;/g" /etc/nginx/conf.d
 systemctl enable nginx.service
 systemctl restart nginx.service
 
+/opt/jupyterhub/bin/python3 -m pip install dockerspawner
 git clone https://github.com/jupyterhub/nativeauthenticator.git /tmp/nativeauthenticator
 /opt/jupyterhub/bin/python3 -m pip install -e /tmp/nativeauthenticator/
 echo "c.JupyterHub.authenticator_class = 'nativeauthenticator.NativeAuthenticator'" >> /opt/jupyterhub/etc/jupyterhub/jupyterhub_config.py
 echo "c.Authenticator.admin_users = {'admin'}" >> /opt/jupyterhub/etc/jupyterhub/jupyterhub_config.py
+
+cat << '_EOF_' >> /opt/jupyterhub/etc/jupyterhub/jupyterhub_config.py
+c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
+
+import os
+notebook_dir = '/home/jovyan/work'
+c.DockerSpawner.notebook_dir = notebook_dir
+
+c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+
+def pre_spawn_hook(spawner):
+    username = spawner.user.name
+    try:
+        import pwd
+        pwd.getpwnam(username)
+    except KeyError:
+        import subprocess
+        subprocess.check_call(['useradd', '-ms', '/bin/bash', username])
+
+c.Spawner.pre_spawn_hook = pre_spawn_hook
+_EOF_
+
 systemctl restart jupyterhub.service
 # インストールはこれでokのはずだが、sing upとsing inが成功しないなぞ
 # base pathが微妙っぽいのでnginxの設定直す
