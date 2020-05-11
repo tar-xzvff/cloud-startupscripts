@@ -166,11 +166,11 @@ echo "c.Authenticator.admin_users = {'admin'}" >> /opt/jupyterhub/etc/jupyterhub
 cat << '_EOF_' >> /opt/jupyterhub/etc/jupyterhub/jupyterhub_config.py
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 
-import os
 notebook_dir = '/home/jovyan/work'
 c.DockerSpawner.notebook_dir = notebook_dir
-
 c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+c.JupyterHub.hub_ip = '0.0.0.0'
+c.DockerSpawner.image = 'jupyterhub/singleuser:1.2'
 
 def pre_spawn_hook(spawner):
     username = spawner.user.name
