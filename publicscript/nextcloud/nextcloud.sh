@@ -10,7 +10,7 @@
 # @sacloud-require-archive distro-centos distro-ver-7
 # @sacloud-text required shellarg maxlen=100 nc_username "管理者ユーザ名"
 # @sacloud-password required shellarg maxlen=100 nc_password "管理者パスワード"
-# @sacloud-checkbox default=off libreoffice_online_enabled "LibreOffice Onlineを有効にする"
+# @sacloud-checkbox libreoffice_online_enabled "LibreOffice Onlineを有効にする"
 
 _motd() {
 	LOG=$(ls /root/.sacloud-api/notes/*log)
