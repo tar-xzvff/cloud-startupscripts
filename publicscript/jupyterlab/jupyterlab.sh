@@ -63,6 +63,8 @@ git clone https://github.com/yyuu/pyenv $home/.pyenv || _motd fail
 echo 'export PYENV_ROOT="$HOME/.pyenv"' >> $home/.bash_profile
 echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> $home/.bash_profile
 echo 'eval "$(pyenv init -)"' >> $home/.bash_profile
+echo 'eval "$(pyenv init --path)"' >> $home/.bash_profile
+echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> $home/.bash_profile
 chown -R $user:$user $home/.pyenv
 echo "[2/5] pyenvをインストールしました"
 
