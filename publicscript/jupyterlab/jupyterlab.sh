@@ -3,8 +3,8 @@
 # @sacloud-name "JupyterLab"
 # @sacloud-once
 #
-# @sacloud-require-archive distro-centos distro-ver-7.*
-# @sacloud-require-archive distro-centos distro-ver-8.*
+# @sacloud-require-archive distro-centos distro-ver-7
+# @sacloud-require-archive distro-centos distro-ver-8
 #
 # @sacloud-desc-begin
 # pyenv, MinicondaまたはAnaconda,JupyterLabをインストールするスクリプトです。
