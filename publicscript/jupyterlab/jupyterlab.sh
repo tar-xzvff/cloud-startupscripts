@@ -83,7 +83,7 @@ su -l $user -c "yes | conda create --name py3.7 python=3.7 anaconda" || _motd fa
 cat << EOF > /tmp/ana3.sh
 source /home/$user/.pyenv/versions/anaconda3-2019.10/bin/activate py3.7
 conda install -c conda-forge jupyterlab ipykernel
-jupyter kernelspec install-self --user
+ipython kernel install
 pip install chainer
 EOF
 chmod 755 /tmp/ana3.sh
